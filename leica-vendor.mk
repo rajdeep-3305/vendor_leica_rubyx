@@ -1,4 +1,3 @@
-cat << 'EOF' > leica-vendor.mk
 $(call inherit-product-if-exists, vendor/leica/rubyx/Android.mk)
 
 PRODUCT_PACKAGES += \
@@ -10,7 +9,6 @@ PRODUCT_PACKAGES += \
     libmtkisp_metadata_sys \
     vendor.mediatek.hardware.camera.isphal-V1-ndk \
     vendor.mediatek.hardware.camera.isphal@1.0 \
-    libdisplayconfig.system.qti \
     MIUIBokehOverlay \
     MIUICameraOverlay \
     MIUIEditorOverlay \
@@ -24,4 +22,3 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.miui.notch=1 \
     persist.vendor.camera.privapp.list=com.android.camera \
     ro.com.google.lens.feature=true
-EOF

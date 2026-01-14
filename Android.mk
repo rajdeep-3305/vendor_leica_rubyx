@@ -1,9 +1,8 @@
-cat << 'EOF' > Android.mk
 LOCAL_PATH := $(call my-dir)
 
 # ==========================================================
 # 1. LEICA PROCESSING LIBS
-# ==========================================================
+#===========================================================
 define define-leica-lib
 include $$(CLEAR_VARS)
 LOCAL_MODULE := $1
@@ -50,13 +49,12 @@ MTK_LIBS := \
     libcamera_mianode_jni.xiaomi \
     libmtkisp_metadata_sys \
     vendor.mediatek.hardware.camera.isphal-V1-ndk \
-    vendor.mediatek.hardware.camera.isphal@1.0 \
-    libdisplayconfig.system.qti
+    vendor.mediatek.hardware.camera.isphal@1.0
 
 $(foreach lib,$(MTK_LIBS),$(eval $(call define-mtk-lib,$(lib))))
 
 # ==========================================================
-# 3. PUBLIC LIBRARIES CONFIG
+# 3. CONFIGURATION FILES
 # ==========================================================
 include $(CLEAR_VARS)
 LOCAL_MODULE := public.libraries-xiaomi.txt
@@ -66,7 +64,7 @@ LOCAL_MODULE_PATH := $(TARGET_OUT_ETC)
 include $(BUILD_PREBUILT)
 
 # ==========================================================
-# 4. PRIV-APPS (SPLIT APK ASSEMBLY)
+# 4. PRIV-APP (SPLIT APK ASSEMBLY)
 # ==========================================================
 include $(CLEAR_VARS)
 LOCAL_MODULE := MIUICamera
@@ -113,4 +111,3 @@ LEICA_OVERLAYS := \
     MIUIGalleryOverlay
 
 $(foreach ov,$(LEICA_OVERLAYS),$(eval $(call define-leica-overlay,$(ov))))
-EOF
