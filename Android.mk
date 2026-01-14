@@ -2,7 +2,7 @@ cat << 'EOF' > Android.mk
 LOCAL_PATH := $(call my-dir)
 
 # ==========================================================
-# 1. SHARED LIBRARIES
+# 1. LEICA PROCESSING LIBS
 # ==========================================================
 define define-leica-lib
 include $$(CLEAR_VARS)
@@ -31,19 +31,42 @@ LEICA_LIBS := \
 $(foreach lib,$(LEICA_LIBS),$(eval $(call define-leica-lib,$(lib))))
 
 # ==========================================================
-# 2. SYSTEM_EXT LIBS
+# 2. HARDWARE INTERFACE LIBS
 # ==========================================================
-include $(CLEAR_VARS)
-LOCAL_MODULE := libdisplayconfig.system.qti
-LOCAL_SRC_FILES := system_ext/lib64/libdisplayconfig.system.qti.so
+define define-mtk-lib
+include $$(CLEAR_VARS)
+LOCAL_MODULE := $1
+LOCAL_SRC_FILES := system_ext/lib64/$1.so
 LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE_CLASS := SHARED_LIBRARIES
 LOCAL_MODULE_SUFFIX := .so
 LOCAL_SYSTEM_EXT_MODULE := true
+include $$(BUILD_PREBUILT)
+endef
+
+MTK_LIBS := \
+    libcamera_algoup_jni.xiaomi \
+    libcamera_ispinterface_jni.xiaomi \
+    libcamera_mianode_jni.xiaomi \
+    libmtkisp_metadata_sys \
+    vendor.mediatek.hardware.camera.isphal-V1-ndk \
+    vendor.mediatek.hardware.camera.isphal@1.0 \
+    libdisplayconfig.system.qti
+
+$(foreach lib,$(MTK_LIBS),$(eval $(call define-mtk-lib,$(lib))))
+
+# ==========================================================
+# 3. PUBLIC LIBRARIES CONFIG
+# ==========================================================
+include $(CLEAR_VARS)
+LOCAL_MODULE := public.libraries-xiaomi.txt
+LOCAL_SRC_FILES := etc/public.libraries-xiaomi.txt
+LOCAL_MODULE_CLASS := ETC
+LOCAL_MODULE_PATH := $(TARGET_OUT_ETC)
 include $(BUILD_PREBUILT)
 
 # ==========================================================
-# 3. PRIV-APPS (SPLIT APK ASSEMBLY)
+# 4. PRIV-APPS (SPLIT APK ASSEMBLY)
 # ==========================================================
 include $(CLEAR_VARS)
 LOCAL_MODULE := MIUICamera
@@ -53,29 +76,25 @@ LOCAL_CERTIFICATE := PRESIGNED
 LOCAL_PRIVILEGED := true
 LOCAL_MODULE_SUFFIX := $(COMMON_ANDROID_PACKAGE_SUFFIX)
 LOCAL_OVERRIDES_PACKAGES := Camera2 Snap MiuiCamera Aperture
-LOCAL_REQUIRED_MODULES := $(LEICA_LIBS) libdisplayconfig.system.qti
+LOCAL_REQUIRED_MODULES := \
+    $(LEICA_LIBS) \
+    $(MTK_LIBS) \
+    public.libraries-xiaomi.txt
 
-# --- Split APK Logic Starts Here ---
-# 1. Find all parts (partaa, partab, ...)
+# --- Split APK Logic ---
 my_src_parts := $(sort $(wildcard $(LOCAL_PATH)/app/MIUICamera/MIUICamera.apk.part*))
-
-# 2. Define where the joined APK will live (in the build cache)
 my_joined_apk := $(call local-intermediates-dir)/MIUICamera.apk
-
-# 3. Create a rule to join them
 $(my_joined_apk): $(my_src_parts)
 	@echo "Joining split APK: $@"
 	@mkdir -p $(dir $@)
 	@cat $^ > $@
-
-# 4. Tell the build system to use this joined file as the source
 LOCAL_PREBUILT_MODULE_FILE := $(my_joined_apk)
-# --- Split APK Logic Ends Here ---
+# --- End Split APK Logic ---
 
 include $(BUILD_PREBUILT)
 
 # ==========================================================
-# 4. OVERLAYS
+# 5. OVERLAYS
 # ==========================================================
 define define-leica-overlay
 include $$(CLEAR_VARS)

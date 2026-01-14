@@ -3,6 +3,13 @@ $(call inherit-product-if-exists, vendor/leica/rubyx/Android.mk)
 
 PRODUCT_PACKAGES += \
     MIUICamera \
+    public.libraries-xiaomi.txt \
+    libcamera_algoup_jni.xiaomi \
+    libcamera_ispinterface_jni.xiaomi \
+    libcamera_mianode_jni.xiaomi \
+    libmtkisp_metadata_sys \
+    vendor.mediatek.hardware.camera.isphal-V1-ndk \
+    vendor.mediatek.hardware.camera.isphal@1.0 \
     libdisplayconfig.system.qti \
     MIUIBokehOverlay \
     MIUICameraOverlay \
