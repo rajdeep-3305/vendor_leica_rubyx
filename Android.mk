@@ -2,7 +2,7 @@ LOCAL_PATH := $(call my-dir)
 
 # ==========================================================
 # 1. LEICA PROCESSING LIBS
-#===========================================================
+# ==========================================================
 define define-leica-lib
 include $$(CLEAR_VARS)
 LOCAL_MODULE := $1
@@ -32,26 +32,67 @@ $(foreach lib,$(LEICA_LIBS),$(eval $(call define-leica-lib,$(lib))))
 # ==========================================================
 # 2. HARDWARE INTERFACE LIBS
 # ==========================================================
-define define-mtk-lib
-include $$(CLEAR_VARS)
-LOCAL_MODULE := $1
-LOCAL_SRC_FILES := system_ext/lib64/$1.so
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := libcamera_algoup_jni.xiaomi
+LOCAL_SRC_FILES := system_ext/lib64/libcamera_algoup_jni.xiaomi.so
 LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE_CLASS := SHARED_LIBRARIES
 LOCAL_MODULE_SUFFIX := .so
 LOCAL_SYSTEM_EXT_MODULE := true
-include $$(BUILD_PREBUILT)
-endef
+LOCAL_SHARED_LIBRARIES := libgui_shim_miuicamera
+include $(BUILD_PREBUILT)
 
-MTK_LIBS := \
-    libcamera_algoup_jni.xiaomi \
-    libcamera_ispinterface_jni.xiaomi \
-    libcamera_mianode_jni.xiaomi \
-    libmtkisp_metadata_sys \
-    vendor.mediatek.hardware.camera.isphal-V1-ndk \
-    vendor.mediatek.hardware.camera.isphal@1.0
+include $(CLEAR_VARS)
+LOCAL_MODULE := libcamera_ispinterface_jni.xiaomi
+LOCAL_SRC_FILES := system_ext/lib64/libcamera_ispinterface_jni.xiaomi.so
+LOCAL_MODULE_TAGS := optional
+LOCAL_MODULE_CLASS := SHARED_LIBRARIES
+LOCAL_MODULE_SUFFIX := .so
+LOCAL_SYSTEM_EXT_MODULE := true
+LOCAL_SHARED_LIBRARIES := \
+    libgui_shim_miuicamera \
+    vendor.mediatek.hardware.camera.isphal@1.0_miuicamera
+include $(BUILD_PREBUILT)
 
-$(foreach lib,$(MTK_LIBS),$(eval $(call define-mtk-lib,$(lib))))
+include $(CLEAR_VARS)
+LOCAL_MODULE := libcamera_mianode_jni.xiaomi
+LOCAL_SRC_FILES := system_ext/lib64/libcamera_mianode_jni.xiaomi.so
+LOCAL_MODULE_TAGS := optional
+LOCAL_MODULE_CLASS := SHARED_LIBRARIES
+LOCAL_MODULE_SUFFIX := .so
+LOCAL_SYSTEM_EXT_MODULE := true
+LOCAL_SHARED_LIBRARIES := libgui_shim_miuicamera
+include $(BUILD_PREBUILT)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := libmtkisp_metadata_sys
+LOCAL_SRC_FILES := system_ext/lib64/libmtkisp_metadata_sys.so
+LOCAL_MODULE_TAGS := optional
+LOCAL_MODULE_CLASS := SHARED_LIBRARIES
+LOCAL_MODULE_SUFFIX := .so
+LOCAL_SYSTEM_EXT_MODULE := true
+include $(BUILD_PREBUILT)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := vendor.mediatek.hardware.camera.isphal-V1-ndk
+LOCAL_SRC_FILES := system_ext/lib64/vendor.mediatek.hardware.camera.isphal-V1-ndk.so
+LOCAL_MODULE_TAGS := optional
+LOCAL_MODULE_CLASS := SHARED_LIBRARIES
+LOCAL_MODULE_SUFFIX := .so
+LOCAL_SYSTEM_EXT_MODULE := true
+include $(BUILD_PREBUILT)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := vendor.mediatek.hardware.camera.isphal@1.0_miuicamera
+LOCAL_MODULE_STEM := vendor.mediatek.hardware.camera.isphal@1.0
+LOCAL_SRC_FILES := system_ext/lib64/vendor.mediatek.hardware.camera.isphal@1.0.so
+LOCAL_MODULE_TAGS := optional
+LOCAL_MODULE_CLASS := SHARED_LIBRARIES
+LOCAL_MODULE_SUFFIX := .so
+LOCAL_SYSTEM_EXT_MODULE := true
+include $(BUILD_PREBUILT)
+
 
 # ==========================================================
 # 3. CONFIGURATION FILES
@@ -74,9 +115,15 @@ LOCAL_CERTIFICATE := PRESIGNED
 LOCAL_PRIVILEGED := true
 LOCAL_MODULE_SUFFIX := $(COMMON_ANDROID_PACKAGE_SUFFIX)
 LOCAL_OVERRIDES_PACKAGES := Camera2 Snap MiuiCamera Aperture
+
 LOCAL_REQUIRED_MODULES := \
     $(LEICA_LIBS) \
-    $(MTK_LIBS) \
+    libcamera_algoup_jni.xiaomi \
+    libcamera_ispinterface_jni.xiaomi \
+    libcamera_mianode_jni.xiaomi \
+    libmtkisp_metadata_sys \
+    vendor.mediatek.hardware.camera.isphal-V1-ndk \
+    vendor.mediatek.hardware.camera.isphal@1.0_miuicamera \
     public.libraries-xiaomi.txt
 
 # --- Split APK Logic ---
